@@ -1,9 +1,11 @@
-# Computer-Games-Architecture
+# Jetpack Hero: A computer games architecture project
+
 This project was implemented for the Computer Games Architecture module in the MSc in Computer Games Technology that I completed in 2020. Our task was to build our own game engine using MonoGame and C# with Visual Studio, and produce a demo of a casual 2D game from it. The demo produced was a space side scrolling shooter in 2D, in which the player is a jetpack astronaut that has to defend himself of the spaceship enemies.
 
 ![Captura de pantalla 2021-01-27 225227](https://user-images.githubusercontent.com/113347414/211168394-47f25ca4-1819-4a27-9f8d-7303b003aa72.png)
 
 [See a video demonstration clicking here](https://youtu.be/cNMMWl-FAWU)
+
 
 
 - Use of resource management strategy to load assets
@@ -12,7 +14,7 @@ The resource management strategy applied for loading the assets has been the use
 
 Example of the Enemy class, in which the Initialize method loads different sprites using the variable content as the ContentManager instance to conform a spaceship:
 
-```
+```C#
   // Load the enemy spaceship texture
 Texture = content.Load<Texture2D>(path + "ship");
 
