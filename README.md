@@ -258,7 +258,7 @@ This score will get serialized in the game state GameFinishedState.
 
 For serializing the data of the players score a XML file has been used. For implementing the serialization in XML, two serializable classes has been added to the game engine part:
 
-´´´C#
+```C#
 [Serializable]
 public class User
 {
