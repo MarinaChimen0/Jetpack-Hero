@@ -77,29 +77,29 @@ In consequence, in the game part classes of the project, the following ones inhe
 
 All these classes have the same CollsionTest method implemented:
 
-```
+```C#
 public override bool CollisionTest(Collidable obj)
-          {
-            if (obj != null)
-            {
-                return BoundingRectangle.Intersects(obj.BoundingRectangle);
-            }
-            return false;
+{
+	if (obj != null)
+        {
+		return BoundingRectangle.Intersects(obj.BoundingRectangle);
+	}
+	return false;
 }
 ```  
 
 Moreover, in the class Level, a collision manager is declared, initialized, and updated to detect the collisions produced between the different elements of the level. As an example, the AddLaser function of this class:
 
-```  
+```C#  
 protected void AddLaser(Laser l)
-          {
-            //Adds laser to the collision manager
-            laserBeams.Add(l);
-            collisionManager.AddCollidable(l);
-   }
+{
+	//Adds laser to the collision manager
+	laserBeams.Add(l);
+	collisionManager.AddCollidable(l);
+}
 ```  
 
--	Moving and animating game elements with frame-rate independent game loop control
+### Moving and animating game elements with frame-rate independent game loop control
 
 All the game elements in the game (the player, the enemies, the lasers, ...) are animated. For creating the animation, the game-engine has an Animation abstract class with two different implementations: SpriteSetAnimation and SpriteStripAnimation. The reason behind this design decision is when the search for asset sprites took place, some assets for animations came with all the different frames in a strip in a sprite, meanwhile other assets came as folders with the animation frames separated in different sprites.
 
@@ -107,20 +107,20 @@ All the game elements in the game (the player, the enemies, the lasers, ...) are
 
 Both of these implementations are frame-rate independent of the game loop control, because for getting updated they use a variable that gets incremented with the time that has passed since the last time their Update function was called:
 
-```
+```C#
 public virtual void Update(GameTime gameTime)
-          {
-            // Do not update the game if we are not active
-            if (Active == false) return;
-            // Update the elapsed time
-            elapsedTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
-            // If the elapsed time is larger than the frame time
-            // we need to switch frames
-            if (elapsedTime > frameTime)
-            {
-                // Move to the next frame
+{
+	// Do not update the game if we are not active
+        if (Active == false) return;
+        // Update the elapsed time
+        elapsedTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
+        // If the elapsed time is larger than the frame time
+        // we need to switch frames
+        if (elapsedTime > frameTime)
+        {
+		// Move to the next frame
                 currentFrame++;
-// If the currentFrame is equal to frameCount reset currentFrame to         zero
+		// If the currentFrame is equal to frameCount reset currentFrame to zero
                 if (currentFrame == frameCount)
                 {
                     currentFrame = 0;
@@ -130,30 +130,30 @@ public virtual void Update(GameTime gameTime)
                 }
                 // Reset the elapsed time to zero
                 elapsedTime = 0;
-   }
+	}
 }
 ```
 
 The movement of the elements is also frame-rate independent of the game loop control. In the case of the player, it is independent since the position will be changed when the arrow keys are pressed because of the event-driven architecture used. In the case of the other elements, this is achieved by using the elapsed time again, multiplying the speed by it. As an example, the change of the position in the Update function of Enemy class:
 
-```
+```C#
 float elapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            // The enemy always moves to the left so decrement it's x position
-            Position.X -= EnemyMoveSpeed* elapsed;
+// The enemy always moves to the left so decrement it's x position
+Position.X -= EnemyMoveSpeed* elapsed;
 ```
 
 There is another element in the game that is animated: the background. The Background class consist on a 2D static texture as the main background and an array of animated layers, of the class ParallaxingBackground. In this class, as in the previous ones, the multiplication of the layer speed by the elapsed time has been used to maintain the animation frame-rate independent:
 
-```
+```C#
 float elapsed = (float)gametime.ElapsedGameTime.TotalSeconds;
-           // Update the positions of the background
-           for (int i = 0; i < positions.Length; i++)
-           {
-                // Update the position of the screen by adding the speed
-                positions[i].X += elapsed*speed;
+// Update the positions of the background
+for (int i = 0; i < positions.Length; i++)
+{
+	// Update the position of the screen by adding the speed
+	positions[i].X += elapsed*speed;
 ```
 
--	Configurable game world with positions/attributes of game elements/opponents using a data-driven approach. 
+### Configurable game world with positions/attributes of game elements/opponents using a data-driven approach. 
 
 In order to make the construction of levels with different configurations easy, the approach chosen for the game engine has been the data driven design, in which the core engine logic must be separated from the game functionality. The type of files used for saving levels configurations is text file.
 
@@ -184,7 +184,7 @@ With the text format clear, in the Level class this kind of files are used in co
 This is done by the method ReadLines that process two lines to get the time and the game elements that must load, saving them in the nextEnemies or nextPowerUps list. Then, in the Update function when the time that has passed since starting the level is equal to the time for loading the elements, the elements in those arrays would be saved in the enemies or powerups lists, and therefore finally set as active in their correspondent update functions.
 
 
--	Collision response based removal of game elements, separating collision detection and collision response code. 
+### Collision response based removal of game elements, separating collision detection and collision response code. 
 
 The way of managing the collisions response in the game-engine classes is the following:
 
@@ -222,7 +222,7 @@ Vector2 collisionNormal = Vector2.Normalize(new Vector2(laser.BoundingRectangle.
 }
 ```
 
--	Scoring system using event listeners
+### Scoring system using event listeners
 
 The score system used for the game is the following: when the player kills an enemy, receives a punctuation depending on the difficulty of the spaceship, that gets added to the score already achieved on that level. This score and the one already saved from the previous levels is showed to the user all the time in the screen. If the user pass the level, the punctuation of the level gets added to the user game punctuation. 
 
