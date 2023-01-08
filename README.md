@@ -7,8 +7,7 @@ This project was implemented for the Computer Games Architecture module in the M
 [See a video demonstration clicking here](https://youtu.be/cNMMWl-FAWU)
 
 
-
-- Use of resource management strategy to load assets
+## Use of resource management strategy to load assets
 
 The resource management strategy applied for loading the assets has been the use of the Content Pipeline from the XNA framework. In first place, all the graphic files have been saved in the Content file using the Monogame Pipeline Tool, where all the related sprites have been set in different folders. Then, in the classes of the game, the path for these assets have been saved for the right element, so the assets and the elements match. The assets are loaded using this path with the ContentManager and they get saved until the game does not need them.
 
