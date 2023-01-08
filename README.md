@@ -4,7 +4,7 @@ This project was implemented for the Computer Games Architecture module in the M
 
 ![Captura de pantalla 2021-01-27 225227](https://user-images.githubusercontent.com/113347414/211168394-47f25ca4-1819-4a27-9f8d-7303b003aa72.png)
 
-[See a video demonstration clicking here](https://youtu.be/cNMMWl-FAWU)
+## [See a video demonstration clicking here](https://youtu.be/cNMMWl-FAWU)
 
 
 ### Use of resource management strategy to load assets
@@ -26,6 +26,7 @@ Texture2D[] sprites = new Texture2D[spriteSetLength];
 
 EnemyAnimation.Initialize(sprites, new Vector2(position.X+scale*Texture.Width/2, position.Y), frameTime, color, scale, true, spriteEffects, rotation, 0);
 ```
+
 
 ### An event-driven architecture to control the game character
 
@@ -58,7 +59,7 @@ commandManager.AddKeyboardBinding(Keys.Space, level.FireShoots);
 
      
  
--	Use of basic brute force techniques for Collision detection
+### Use of basic brute force techniques for Collision detection
 
 A game-engine should have an implementation for detecting (and handling) collisions, since in almost every game the contact between the elements is relevant for the resolution of it. For this reason, the game-engine created has a collision detection and response system. It is based on having a base class, Collidable, from which all the classes that represents objects that have the characteristic of colliding, have to inherit. 
 
