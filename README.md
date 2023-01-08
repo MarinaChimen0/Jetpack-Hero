@@ -7,15 +7,14 @@ This project was implemented for the Computer Games Architecture module in the M
 [See a video demonstration clicking here](https://youtu.be/cNMMWl-FAWU)
 
 
-#### Use of resource management strategy to load assets
+### Use of resource management strategy to load assets
 
 The resource management strategy applied for loading the assets has been the use of the Content Pipeline from the XNA framework. In first place, all the graphic files have been saved in the Content file using the Monogame Pipeline Tool, where all the related sprites have been set in different folders. Then, in the classes of the game, the path for these assets have been saved for the right element, so the assets and the elements match. The assets are loaded using this path with the ContentManager and they get saved until the game does not need them.
 
 Example of the Enemy class, in which the Initialize method loads different sprites using the variable content as the ContentManager instance to conform a spaceship:
 
 ```C#
-  // Load the enemy spaceship texture
-Texture = content.Load<Texture2D>(path + "ship");
+//Texture = content.Load<Texture2D>(path + "ship");
 
 //Load the motor animation
 EnemyAnimation = new SpriteSetAnimation();
@@ -28,9 +27,9 @@ Texture2D[] sprites = new Texture2D[spriteSetLength];
 EnemyAnimation.Initialize(sprites, new Vector2(position.X+scale*Texture.Width/2, position.Y), frameTime, color, scale, true, spriteEffects, rotation, 0);
 ```
 
-- An event-driven architecture to cntrol of the game character
+### An event-driven architecture to control the game character
 
-For implementing this, an event driven architecture has been created in order to provide a different layer of abstraction between the keyboard input and the player response. Instead of having to check if an event has occurred, the event is fired and gets received by the listener class.
+An event driven architecture has been created in order to provide a different layer of abstraction between the keyboard input and the player response. Instead of having to check if an event has occurred, the event is fired and gets received by the listener class.
 
 The classes that have implemented this functionality are clearly divided by the ones that constitute the game-engine, and the ones that are just using the game-engine for generating the game. In the first place there are:
 
@@ -46,7 +45,7 @@ On the other hand, the game classes that implement this functionality of the gam
 
 -Game: In the class that represents the Game, the command manager for the game is created, and the pairs of keys and game actions get bind at the InitializeBindings function:
 
-```
+```C#
 commandManager = new CommandManager();
 commandManager.AddKeyboardBinding(Keys.Up, level.Player.Up);
 commandManager.AddKeyboardBinding(Keys.Down, level.Player.Down);
