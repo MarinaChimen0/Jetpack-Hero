@@ -198,27 +198,27 @@ The way of managing the collisions response in the game-engine classes is the fo
 
 In the game, every class that inherits from Collidable has its own OnCollision method, depending on what they should do when colliding with other collidables. As an example, the method implemented for the class Player, in which if the player loses all his health he will be removed:
 
-```
+```C#
 public override void OnCollision(Collidable obj)
-        {
-            // Cast the object as a laser
-            Laser laser = obj as Laser;
-            if (laser != null)
-            {
-                //Moves the character position
-Vector2 collisionNormal = Vector2.Normalize(new Vector2(laser.BoundingRectangle.Center.X - BoundingRectangle.Center.X, laser.BoundingRectangle.Center.Y - BoundingRectangle.Center.Y));
-              Position.X = Position.X + (-collisionNormal.X*5);
-              Position.Y = Position.Y + (-collisionNormal.Y*5);
-              //Change player health
-              Health -= laser.Damage;
-              // If the player health is less than zero we died
-              if (Health <= 0)
-                    Active = false;
+{
+	// Cast the object as a laser
+	Laser laser = obj as Laser;
+	if (laser != null)
+	{
+		//Moves the character position
+		Vector2 collisionNormal = Vector2.Normalize(new Vector2(laser.BoundingRectangle.Center.X - BoundingRectangle.Center.X, laser.BoundingRectangle.Center.Y - BoundingRectangle.Center.Y));
+		Position.X = Position.X + (-collisionNormal.X*5);
+		Position.Y = Position.Y + (-collisionNormal.Y*5);
+		//Change player health
+		Health -= laser.Damage;
+		// If the player health is less than zero we died
+		if (Health <= 0)
+			Active = false;
             	} 
-              // Cast the object as a Power Up
-            PowerUp pu = obj as PowerUp;
-            if(pu != null)
-                Health = Health + pu.Health;
+		// Cast the object as a Power Up
+		PowerUp pu = obj as PowerUp;
+		if(pu != null)
+			Health = Health + pu.Health;
 }
 ```
 
@@ -228,58 +228,60 @@ The score system used for the game is the following: when the player kills an en
 
 In the game code this works in the following manner. First in the Enemy class, taking profit of the OnCollision method, if an Enemy has a collision with an object of the type Shoot (the class that represents the fire of the player) and it loses all his health in the collision, the score of the level in which is the enemy will get uploaded:
  
-```
+```C#
 public override void OnCollision(Collidable obj)
-          {
-            Shoot shoot = obj as Shoot;
-            if (shoot != null)
-            {
-                Health = Health - shoot.Damage;
+{
+	Shoot shoot = obj as Shoot;
+        if (shoot != null)
+        {
+		Health = Health - shoot.Damage;
                 if (Health <= 0)
                 {
                     playedOn.Score = playedOn.Score + Value;
                     Active = false;
                 }
-            }
+	}
 }
 ```
 
 In the Update method of the Game class, the final score gets updated when the level has been passed:
 
-```
- level.Update(gameTime);
-           if (level.levelSucceded)
-     score = score + level.Score;
+```C#
+level.Update(gameTime);
+if (level.levelSucceded)
+	score = score + level.Score;
 ```
 
 This score will get serialized in the game state GameFinishedState.
 
-- High-score table using serialization.
+### High-score table using serialization.
 
 For serializing the data of the players score a XML file has been used. For implementing the serialization in XML, two serializable classes has been added to the game engine part:
 
-´´´
+´´´C#
 [Serializable]
-    	    public class User
-           {
-        	[XmlElement("ID")]
-        	public int ID { get; set; }
-        	[XmlElement("Score")]
-    public int score { get; set; }
+public class User
+{
+	[XmlElement("ID")]
+	public int ID { get; set; }
+        [XmlElement("Score")]
+        public int score { get; set; }
+```
 
+```C#
 [Serializable()]
-    	    [XmlRoot("UserCollection")]
- 	    public class UserCollection
-    	    {
-[XmlArray("Users"), XmlArrayItem(typeof(User), ElementName = "User")]
-    public List<User> Users { get; set; }
+[XmlRoot("UserCollection")]
+public class UserCollection
+{
+	[XmlArray("Users"), XmlArrayItem(typeof(User), ElementName = "User")]
+   	public List<User> Users { get; set; }
 ```
 
 The User class represents the user that is using or has used the game. The ID is set by the game based on the number of users that have played, so if the game has been played 5 times, the user ID will be 6. The score is the score achieved when the user has passed all the levels. The UserCollection represents a list of elements of the class User. 
 
 In the Game class there is a variable for the user (User) and for the user list (usersList). In the GameStartState game state, the xml is deserialize with the following method of the Game class:
 
-```
+```C#
        	 public UserCollection DeserializeList(StreamReader reader)
        	 {
             		//Creates the object and the list
@@ -332,7 +334,7 @@ Example of fila generated:
 
 With the same list that has been used for generating the XML, the score is printed in the scoreboard.
  
-- Start-screen (containing intro and keyboard controls) and game over screen (with score and restart options) using state pattern and FSM with game loop
+### Start-screen (containing intro and keyboard controls) and game over screen (with score and restart options) using state pattern and FSM with game loop
 
 The game contain another two overlays, one for the start-screen that contains the name of the game and the keyboard controls, and the other one for the game over screen, that asks the player to press enter to restart the level.
 For controlling in which state is the game, how it is the flow between those states and in consequence, which overlay has to load, a Finite State Machine (FSM) system has been implemented. The system itself is part of the game-engine, in fact as it shown at point 3) in this part, it has been used in this game for a different purpose. 
@@ -362,9 +364,10 @@ levelState.AddTransition(new Transition(finished, () => (level.levelSucceded&&(l
 ```
 
 Creating the following state machine:
+
 ![image](https://user-images.githubusercontent.com/113347414/211204294-64349418-847a-49d8-a899-bc4b7f68edd5.png)
 
--	Power-ups using event-listeners 
+### Power-ups using event-listeners 
 
 A class PowerUp has been created for helping the player in the difficult moments of the game, since it is going to increase the player health by 50 points. The PoweUp class inherits from the class Collidable, so this approach is the one that has been used to increment the health on the player. In the Player class:
 
@@ -386,7 +389,7 @@ public override void OnCollision(Collidable obj)
 ```
 On the other hand, the use of a base class for all the game objects didn’t seem to me like the best implementation in this case, because the Level class loads dynamically the objects so it needs to know exactly of which type they are.
 
--	NPC opponents using FSM control of game objects 
+### NPC opponents using FSM control of game objects 
 
 The FSM system implemented has been used with another different purpose apart from setting the overlays. It has been used to give artificial intelligence to the non-playable characters of the game, the spaceships, so they will behave in different way depending on which state they are.
 
