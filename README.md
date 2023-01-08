@@ -266,6 +266,8 @@ public class User
 	public int ID { get; set; }
         [XmlElement("Score")]
         public int score { get; set; }
+	...
+}
 ```
 
 ```C#
@@ -275,6 +277,8 @@ public class UserCollection
 {
 	[XmlArray("Users"), XmlArrayItem(typeof(User), ElementName = "User")]
    	public List<User> Users { get; set; }
+	...
+}
 ```
 
 The User class represents the user that is using or has used the game. The ID is set by the game based on the number of users that have played, so if the game has been played 5 times, the user ID will be 6. The score is the score achieved when the user has passed all the levels. The UserCollection represents a list of elements of the class User. 
@@ -282,38 +286,38 @@ The User class represents the user that is using or has used the game. The ID is
 In the Game class there is a variable for the user (User) and for the user list (usersList). In the GameStartState game state, the xml is deserialize with the following method of the Game class:
 
 ```C#
-       	 public UserCollection DeserializeList(StreamReader reader)
-       	 {
-            		//Creates the object and the list
-            		UserCollection list = new UserCollection();
-          		list.Users = new List<User>();
-          	  	//If the file is not empty
-            		if (reader.Peek() != -1) {
-                	//Reads the file
-XmlSerializer serializer = new XmlSerializer(typeof(UserCollection));
-list = (UserCollection)serializer.Deserialize(reader);
-            	 	}
-            		//Closes the reader
-            		reader.Close();
-            		//Returns the list
-            		return list;
-  	 }
+public UserCollection DeserializeList(StreamReader reader)
+{
+	//Creates the object and the list
+	UserCollection list = new UserCollection();
+	list.Users = new List<User>();
+	//If the file is not empty
+	if (reader.Peek() != -1) {
+		//Reads the file
+		XmlSerializer serializer = new XmlSerializer(typeof(UserCollection));
+		list = (UserCollection)serializer.Deserialize(reader);
+	}
+	//Closes the reader
+	reader.Close();
+	//Returns the list
+	return list;
+}
 ```
 
 The list is saved in usersList and the current User initialised. When the player arrives to the GameFinishedState game state, the list gets appended the new user and serialize the list. 
 
-```
+```C#
 //Saves user score and serializes it
-            game.user.setScore(game.score);
-            game.usersList.Add(game.user);
-            UserCollection uc = new UserCollection();
-            uc.Users = game.usersList;
-            XmlSerializer ser = new XmlSerializer(typeof(UserCollection));
-            //Inilize the stream 
+game.user.setScore(game.score);
+game.usersList.Add(game.user);
+UserCollection uc = new UserCollection();
+uc.Users = game.usersList;
+XmlSerializer ser = new XmlSerializer(typeof(UserCollection));
+//Inilize the stream 
 game.stream = new FileStream("Content/Score/sc.xml", FileMode.Open, FileAccess.Write);
-            ser.Serialize(new StreamWriter(game.stream), uc);
-            game.stream.Close();
-            game.currentOverlay = game.winOverlay;
+ser.Serialize(new StreamWriter(game.stream), uc);
+game.stream.Close();
+game.currentOverlay = game.winOverlay;
 ```
 
 Example of fila generated:
@@ -347,20 +351,20 @@ With the system ready, to use it as part of the game it is needed to create the 
  
 Finally, in the game class, a FSM object is declared, initialized and updated so it can controls the state of the game and what has to be shown. Before FSM is initialized, the transitions between the game states are added, having as condition a bool that represents if the player has pressed the enter or a bool that represents if  the player has succeeded or lost the previous level, and if it was the last one:
 
-```
-     // Create the transitions between the states
-            start.AddTransition(new Transition(levelState, () => enter));
-levelState.AddTransition(new Transition(levelState, () =>                 (level.levelSucceded && (levelIndex < (numberOfLevels-1)))));
+```C#
+// Create the transitions between the states
+start.AddTransition(new Transition(levelState, () => enter));
+levelState.AddTransition(new Transition(levelState, () => (level.levelSucceded && (levelIndex < (numberOfLevels-1)))));
 levelState.AddTransition(new Transition(over, () => level.levelFailed));
 levelState.AddTransition(new Transition(finished, () => (level.levelSucceded&&(levelIndex==(numberOfLevels-1)))));
-            over.AddTransition(new Transition(levelState, () => enter));
-            finished.AddTransition(new Transition(start, () => enter));
+over.AddTransition(new Transition(levelState, () => enter));
+finished.AddTransition(new Transition(start, () => enter));
 
-            // Add the created states to the FSM
-            fsm.AddState(start);
-            fsm.AddState(levelState);
-            fsm.AddState(over);
-     fsm.AddState(finished);
+// Add the created states to the FSM
+fsm.AddState(start);
+fsm.AddState(levelState);
+fsm.AddState(over);
+fsm.AddState(finished);
 ```
 
 Creating the following state machine:
@@ -371,9 +375,9 @@ Creating the following state machine:
 
 A class PowerUp has been created for helping the player in the difficult moments of the game, since it is going to increase the player health by 50 points. The PoweUp class inherits from the class Collidable, so this approach is the one that has been used to increment the health on the player. In the Player class:
 
-```
+```C#
 public override void OnCollision(Collidable obj)
-          {
+{
             // Cast the object as a laser
             Laser laser = obj as Laser;
             if (laser != null)
@@ -387,6 +391,7 @@ public override void OnCollision(Collidable obj)
   }
 
 ```
+
 On the other hand, the use of a base class for all the game objects didn’t seem to me like the best implementation in this case, because the Level class loads dynamically the objects so it needs to know exactly of which type they are.
 
 ### NPC opponents using FSM control of game objects 
@@ -399,20 +404,20 @@ The implementation of the engine part has been already explained. To use it in t
  
 When the FSM enters in those states is going to set the speed of the spaceship. The EnemyAdvanceFastState is the initial state and sets a fast speed, until the spaceship reaches the half of the window. In this moment the state will change to EnemyAdvanceSlowState that will set a really low speed, so the spaceships continue being a problem for the enemy, instead of getting out of the window.
 
-```
+```C#
 // Initialise the FSM
-            halfScreen = false;
-            fsm = new FSM(this);
-            // Create the states
-            EnemyAdvanceFastState fast = new EnemyAdvanceFastState();
-            EnemyAdvanceSlowState slow = new EnemyAdvanceSlowState();
-            // Create the transitions between the states
-            fast.AddTransition(new Transition(slow, () => halfScreen));
-            // Add the created states to the FSM
-            fsm.AddState(fast);
-            fsm.AddState(slow);
-            // Set the starting state of the FSM
-            fsm.Initialise("Fast");
+halfScreen = false;
+fsm = new FSM(this);
+// Create the states
+EnemyAdvanceFastState fast = new EnemyAdvanceFastState();
+EnemyAdvanceSlowState slow = new EnemyAdvanceSlowState();
+// Create the transitions between the states
+fast.AddTransition(new Transition(slow, () => halfScreen));
+// Add the created states to the FSM
+fsm.AddState(fast);
+fsm.AddState(slow);
+// Set the starting state of the FSM
+fsm.Initialise("Fast");
 ```
 
 Creating the following state machine:
