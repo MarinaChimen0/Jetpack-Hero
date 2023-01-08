@@ -4,7 +4,7 @@ This project was implemented for the Computer Games Architecture module in the M
 
 ![Captura de pantalla 2021-01-27 225227](https://user-images.githubusercontent.com/113347414/211168394-47f25ca4-1819-4a27-9f8d-7303b003aa72.png)
 
-## [See a video demonstration clicking here](https://youtu.be/cNMMWl-FAWU)
+### [See a video demonstration clicking here](https://youtu.be/cNMMWl-FAWU)
 
 
 ### Use of resource management strategy to load assets
