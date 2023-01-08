@@ -324,15 +324,16 @@ Example of fila generated:
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
+
 <UserCollection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-<Users>
-<User>
-<ID>1</ID>
-<Score>300</Score>
-<ID>2</ID>
-<Score>2800</Score>
-		       </User>
-</Users>
+	<Users>
+		<User>
+			<ID>1</ID>
+				<Score>300</Score>
+			<ID>2</ID>
+				<Score>2800</Score>
+		</User>
+	</Users>
 </UserCollection>
 ```
 
